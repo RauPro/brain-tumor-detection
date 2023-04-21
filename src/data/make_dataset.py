@@ -6,14 +6,27 @@ import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from src.utils.data_processing import validate_directory, copy_instances, rename_instances
-
+import tensorflow as tf
 
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
 @click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+def main(input_filepath, output_filepath, train_ratio, validation_ratio, test_ratio):
     """ Runs data processing scripts to turn raw data from (../interim) into
         cleaned data ready to be analyzed (saved in ../processed).
+
+        Parameters
+        ----------
+        input_filepath : str
+            Path to the source directory.
+        output_filepath : str
+            Path to the target directory.
+        train_ratio : float
+            Ratio of the training set.
+        validation_ratio : float
+            Ratio of the validation set.
+        test_ratio : float
+            Ratio of the test set.
     """
     logger = logging.getLogger(__name__)
     logger.info('making final data set from raw data')
