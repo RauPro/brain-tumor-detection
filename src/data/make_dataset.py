@@ -7,6 +7,7 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from src.utils.data_processing import validate_directory, copy_instances, rename_instances
 import tensorflow as tf
+from random import shuffle
 
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
@@ -28,30 +29,43 @@ def main(input_filepath, output_filepath, train_ratio, validation_ratio, test_ra
         test_ratio : float
             Ratio of the test set.
     """
+    for class_name in ["yes", "no"]:
+        # Create output directory if not exist
+        if not validate_directory(output_filepath):
+            os.mkdir(output_filepath)
+
+        # Validate if train, validation and test directories exist if not create them
+        os.makedirs(os.path.join(output_filepath, "train", class_name), exist_ok=True)
+        os.makedirs(os.path.join(output_filepath, "validation", class_name), exist_ok=True)
+        os.makedirs(os.path.join(output_filepath, "test", class_name), exist_ok=True)
+
+        # List and shuffle images
+        img_files = os.listdir(os.path.join(input_filepath, class_name))
+        shuffle(img_files)
+
+        # Calculate the index to split the data
+        total_index = len(img_files)
+        train_index = int(total_index * train_ratio)
+        validation_index = train_index + int(total_index * validation_ratio)
+
+        # Split the data
+        train_files = img_files[:train_index]
+        validation_files = img_files[train_index:validation_index]
+        test_files = img_files[validation_index:]
+
+        # Copy the images to the corresponding directories
+        for file in train_files:
+            copy_instances(os.path.join(input_filepath, class_name, file), os.path.join(output_filepath, "train",
+                                                                                        class_name, file))
+        for file in validation_files:
+            copy_instances(os.path.join(input_filepath, class_name, file), os.path.join(output_filepath, "validation",
+                                                                                        class_name, file))
+        for file in test_files:
+            copy_instances(os.path.join(input_filepath, class_name, file), os.path.join(output_filepath, "test",
+                                                                                        class_name, file))
+
     logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
-
-
-def make_renamed_dataset(input_filepath, target_filepath, appended_string):
-    """Copy the instances from a source directory to a target directory.
-
-    Parameters
-    ----------
-    input_filepath : str
-        Path to the source directory.
-    target_filepath : str
-        Path to the target directory.
-    appended_string : str
-        String to append to the instance name.
-
-    """
-    if not validate_directory(target_filepath):
-        os.mkdir(target_filepath)
-        copy_instances(input_filepath, target_filepath)
-        rename_instances(target_filepath, appended_string)
-        return f"Success in making the {appended_string} renamed dataset."
-    else:
-        raise ValueError('The input target directory is already done.')
+    logger.info('making final data set from inter data')
 
 
 if __name__ == '__main__':
