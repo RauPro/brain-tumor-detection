@@ -1,6 +1,8 @@
 import os
 import shutil
 
+import cv2
+from tensorflow import keras
 
 def count_instances(directory):
     """Count the number of instances in a directory.
@@ -67,3 +69,48 @@ def validate_directory(directory):
 
     """
     return os.path.isdir(directory)
+
+# Method for data augmented dataset
+def make_data_augmented_dataset(file_dir, n_generated_samples, save_to_dir):
+    """Make a data augmented dataset.
+
+    Parameters
+    ----------
+    file_dir : str
+        Path to the directory containing the original dataset.
+    n_generated_samples : int
+        Number of samples to be generated for each image.
+    save_to_dir : str
+        Path to the directory where the augmented dataset will be saved.
+
+    Returns
+    -------
+    str
+        Message indicating if the dataset was successfully created or not.
+
+    """
+    data_gen = keras.preprocessing.image.ImageDataGenerator(
+        rotation_range=10,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        shear_range=0.15,
+        zoom_range=0.1,
+        brightness_range=[0.2, 1.0],
+        horizontal_flip=True,
+        vertical_flip=False,
+        fill_mode='nearest')
+
+    for file_name in os.listdir(file_dir):
+        img = cv2.imread(os.path.join(file_dir, file_name))
+        img = img.reshape((1,) + img.shape)
+        save_prefix = 'aug_' + file_name[:-4]
+        amount = 0
+        for _ in data_gen.flow(img, batch_size=1,
+                               save_to_dir=save_to_dir,
+                               save_prefix=save_prefix,
+                               save_format='jpeg'):
+            amount += 1
+            if amount > n_generated_samples:
+                break
+
+    return 'Success in making the data augmented dataset.'
