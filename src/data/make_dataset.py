@@ -10,11 +10,12 @@ import tensorflow as tf
 from random import shuffle
 import shutil
 
+''' To split with comando line
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
 @click.argument('output_filepath', type=click.Path())
 @click.argument('train_ratio', type=float)
-@click.argument('validation_ratio', type=float)
+@click.argument('validation_ratio', type=float)'''
 def main(input_filepath, output_filepath, train_ratio, validation_ratio):
     """ Runs data processing scripts to turn raw data from (../interim) into
         cleaned data ready to be analyzed (saved in ../interim/split).

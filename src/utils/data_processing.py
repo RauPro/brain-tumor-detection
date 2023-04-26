@@ -71,7 +71,7 @@ def validate_directory(directory):
     return os.path.isdir(directory)
 
 # Method for data augmented dataset
-def make_data_augmented_dataset(file_dir, n_generated_samples, save_to_dir):
+def make_data_augmented_dataset(file_dir, n_generated_samples, save_to_dir, save_prefix):
     """Make a data augmented dataset.
 
     Parameters
@@ -82,6 +82,8 @@ def make_data_augmented_dataset(file_dir, n_generated_samples, save_to_dir):
         Number of samples to be generated for each image.
     save_to_dir : str
         Path to the directory where the augmented dataset will be saved.
+    save_prefix : str
+        Prefix of the directory to save samples generated.
 
     Returns
     -------
@@ -89,6 +91,15 @@ def make_data_augmented_dataset(file_dir, n_generated_samples, save_to_dir):
         Message indicating if the dataset was successfully created or not.
 
     """
+
+    if not validate_directory(save_to_dir):
+        os.mkdir(save_to_dir)
+
+    if not validate_directory(os.path.join(save_to_dir, save_prefix)):
+        os.mkdir(os.path.join(save_to_dir, save_prefix))
+    else:
+        shutil.rmtree(os.path.join(save_to_dir, save_prefix))
+    save_to_dir += save_prefix
     data_gen = keras.preprocessing.image.ImageDataGenerator(
         rotation_range=10,
         width_shift_range=0.1,
