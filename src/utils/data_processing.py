@@ -174,8 +174,8 @@ def crop_brain_contour(image, plot=False):
     thresh = cv2.dilate(thresh, None, iterations=2)
 
     # Find contours in thresholded image, then grab the largest one
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
-    cnts.imutils.grab_contours(cnts)
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
     c = max(cnts, key=cv2.contourArea)
 
     # Find the extreme points
@@ -191,16 +191,76 @@ def crop_brain_contour(image, plot=False):
         plt.subplot(1, 2, 1)
         plt.imshow(image)
         plt.tick_params(axis='both', which='both', bottom=False, top=False,
-                        labelbottom=False, right=False, left=False, labelleft=False)
+                        labelbottom=False, right=False, left=False, labelleft=False, labelright=False, labeltop=False)
         plt.title('Original Image')
 
         plt.subplot(1, 2, 2)
         plt.imshow(new_image)
 
         plt.tick_params(axis='both', which='both', bottom=False, top=False,
-                        labelbottom=False, right=False, left=False, labelleft=False)
+                        labelbottom=False, right=False, left=False, labelleft=False, labelright=False, labeltop=False)
         plt.title('Cropped Image')
 
         plt.show()
 
     return new_image
+
+def corp_dataset(processed_folder, *source_folders):
+    """Crop the images in the dataset.
+
+    Parameters
+    ----------
+    processed_folder : str
+        Path to the directory where the cropped images will be saved.
+    *source_folders : *str
+        Paths to the directories containing the original images.
+
+    Returns
+    -------
+    str
+        Message indicating if the dataset was successfully cropped or not.
+
+    """
+
+    # Create the directory train/validation/test where the cropped images will be saved
+    if not validate_directory(processed_folder):
+        os.mkdir(processed_folder)
+    else:
+        shutil.rmtree(processed_folder)
+        os.mkdir(processed_folder)
+
+    # Create the subdirectories inside train/validation/test
+    os.mkdir(os.path.join(processed_folder, 'train',  'yes'))
+    os.mkdir(os.path.join(processed_folder, 'train', 'no'))
+    os.mkdir(os.path.join(processed_folder, 'validation', 'yes'))
+    os.mkdir(os.path.join(processed_folder, 'validation', 'no'))
+    os.mkdir(os.path.join(processed_folder, 'test', 'yes'))
+    os.mkdir(os.path.join(processed_folder, 'test', 'no'))
+
+    # crop the images and save them in the respective directory
+    tumor_cases = ['yes', 'no']
+    for source_folder in source_folders:
+        if os.path.isdir(source_folder):
+            if "train" in source_folder:
+                for tumor_case in tumor_cases:
+                    for file_name in os.listdir(os.path.join(source_folder, tumor_case)):
+                        img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
+                        if img is not None:
+                            img = crop_brain_contour(img)
+                            cv2.imwrite(os.path.join(processed_folder, 'train', tumor_case, file_name), img)
+            elif "validation" in source_folder:
+                for tumor_case in tumor_cases:
+                    for file_name in os.listdir(os.path.join(source_folder, tumor_case)):
+                        img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
+                        if img is not None:
+                            img = crop_brain_contour(img)
+                            cv2.imwrite(os.path.join(processed_folder, 'validation', tumor_case, file_name), img)
+            elif "test" in source_folder:
+                for tumor_case in tumor_cases:
+                    for file_name in os.listdir(os.path.join(source_folder, tumor_case)):
+                        img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
+                        if img is not None:
+                            img = crop_brain_contour(img)
+                            cv2.imwrite(os.path.join(processed_folder, 'test', tumor_case, file_name), img)
+
+    return 'Dataset cropped successfully'

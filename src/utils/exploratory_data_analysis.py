@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import cv2
 
 def plot_sample_images(X, y, n=50):
     """Plot sample images from a dataset.
@@ -41,3 +43,33 @@ def plot_sample_images(X, y, n=50):
         plt.suptitle(f"Brain Tumor: {label_to_str(label)}")
         plt.show()
 
+def load_data(load_dir_list, image_size):
+    """Load data from a directory.
+
+    Parameters
+    ----------
+    load_dir_list : list
+        List of directories to load data from.
+    image_size : tuple
+        Size of the images.
+
+    Returns
+    -------
+    tuple
+        Tuple containing the loaded data.
+    """
+    X = []
+    y = []
+
+    for load_dir in load_dir_list:
+        for filename in os.listdir(load_dir):
+            image = cv2.imread(os.path.join(load_dir, filename))
+            image = cv2.resize(image, image_size)
+
+            X.append(image)
+            y.append(1 if load_dir.split('\\')[-1] == 'yes' else 0)
+
+    X = np.array(X)
+    y = np.array(y)
+
+    return X, y
