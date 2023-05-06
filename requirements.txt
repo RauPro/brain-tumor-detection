@@ -11,6 +11,7 @@ opencv-python
 scikit-image
 matplotlib
 numpy
+imutils
 scipy
 seaborn
 flake8
