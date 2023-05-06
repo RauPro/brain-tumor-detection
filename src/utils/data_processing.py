@@ -230,6 +230,9 @@ def corp_dataset(processed_folder, *source_folders):
         os.mkdir(processed_folder)
 
     # Create the subdirectories inside train/validation/test
+    os.mkdir(os.path.join(processed_folder, 'train'))
+    os.mkdir(os.path.join(processed_folder, 'validation'))
+    os.mkdir(os.path.join(processed_folder, 'test'))
     os.mkdir(os.path.join(processed_folder, 'train',  'yes'))
     os.mkdir(os.path.join(processed_folder, 'train', 'no'))
     os.mkdir(os.path.join(processed_folder, 'validation', 'yes'))
