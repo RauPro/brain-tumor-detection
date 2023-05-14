@@ -239,7 +239,7 @@ def corp_dataset(processed_folder, *source_folders):
     os.mkdir(os.path.join(processed_folder, 'validation', 'no'))
     os.mkdir(os.path.join(processed_folder, 'test', 'yes'))
     os.mkdir(os.path.join(processed_folder, 'test', 'no'))
-
+    image_width, image_height= 240, 240
     # crop the images and save them in the respective directory
     tumor_cases = ['yes', 'no']
     for source_folder in source_folders:
@@ -250,6 +250,9 @@ def corp_dataset(processed_folder, *source_folders):
                         img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
                         if img is not None:
                             img = crop_brain_contour(img)
+                            image = cv2.resize(image, dsize=(image_width, image_height),
+                                               interpolation=cv2.INTER_CUBIC)
+                            image = image / 255.
                             cv2.imwrite(os.path.join(processed_folder, 'train', tumor_case, file_name), img)
             elif "validation" in source_folder:
                 for tumor_case in tumor_cases:
@@ -257,6 +260,9 @@ def corp_dataset(processed_folder, *source_folders):
                         img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
                         if img is not None:
                             img = crop_brain_contour(img)
+                            image = cv2.resize(image, dsize=(image_width, image_height),
+                                               interpolation=cv2.INTER_CUBIC)
+                            image = image / 255.
                             cv2.imwrite(os.path.join(processed_folder, 'validation', tumor_case, file_name), img)
             elif "test" in source_folder:
                 for tumor_case in tumor_cases:
@@ -264,6 +270,9 @@ def corp_dataset(processed_folder, *source_folders):
                         img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
                         if img is not None:
                             img = crop_brain_contour(img)
+                            image = cv2.resize(image, dsize=(image_width, image_height),
+                                               interpolation=cv2.INTER_CUBIC)
+                            image = image / 255.
                             cv2.imwrite(os.path.join(processed_folder, 'test', tumor_case, file_name), img)
 
     return 'Dataset cropped successfully'
