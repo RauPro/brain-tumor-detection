@@ -250,7 +250,7 @@ def corp_dataset(processed_folder, *source_folders):
                         img = cv2.imread(os.path.join(source_folder, tumor_case, file_name))
                         if img is not None:
                             img = crop_brain_contour(img)
-                            image = cv2.resize(image, dsize=(image_width, image_height),
+                            image = cv2.resize(img, dsize=(image_width, image_height),
                                                interpolation=cv2.INTER_CUBIC)
                             image = image / 255.
                             cv2.imwrite(os.path.join(processed_folder, 'train', tumor_case, file_name), img)
