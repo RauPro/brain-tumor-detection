@@ -4,10 +4,14 @@
 
 BrainTumorFinder is a machine learning model used for the detection of brain tumors. This application leverages TensorFlow and utilizes the VGG19 architecture, along with transfer learning techniques for effective tumor detection. The model has been developed and fine-tuned through three stages: a frozen model, a tuned model, and a fine-tuned model. The original version of the model achieved an accuracy of 98%, whereas the version mapped and split into multiple files managed an accuracy of 90%.
 
+Paper reference: 
+[Brain Tumor Detection Using Machine Learning and Deep Learning: A Review](https://webofscience.uca.elogim.com/wos/woscc/full-record/WOS:000848445600003)
+[MRI-based brain tumor detection using convolutional deep learning methods and chosen machine learning techniques](https://webofscience.uca.elogim.com/wos/woscc/full-record/WOS:000917653900002)
+
 ## Model Dataset
 
 The dataset used in this project comes from Kaggle and consists of 253 images: 98 of them do not have brain tumors, while the rest do. The use of this particular dataset has allowed the model to effectively learn and differentiate between brains with and without tumors.
-
+[Kaggle Dataset](https://www.kaggle.com/datasets/navoneel/brain-mri-images-for-brain-tumor-detection)
 
 ## Project Organization
 ------------
