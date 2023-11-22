@@ -3,7 +3,7 @@ FROM tensorflow/serving:2.12.1
 ENV MODEL_BASE_PATH /models
 ENV MODEL_NAME brain_tumor_validator
 
-COPY .models/MRI_validator /models/brain_tumor_validator
+COPY ./models/MRI_validator /models/brain_tumor_validator
 
 RUN echo '#!/bin/bash \n\n\
 tensorflow_model_server  --rest_api_port=$PORT \
